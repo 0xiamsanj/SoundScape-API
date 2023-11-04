@@ -20,6 +20,7 @@ const endPoints = {
   homeData: "__call=webapi.getLaunchData",
   search: "__call=autocomplete.get",
   topSearches: "__call=content.getTopSearches",
+  lyrics: "__call=lyrics.getLyrics",
   fromToken: "__call=webapi.get",
   featuredRadio: "__call=webradio.createFeaturedStation",
   artistRadio: "__call=webradio.createArtistStation",
@@ -38,5 +39,5 @@ const endPoints = {
 module.exports = {
   baseUrl,
   apiStr,
-  endPoints
+  endPoints,
 };
