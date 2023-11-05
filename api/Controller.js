@@ -1,5 +1,5 @@
-const { baseUrl, endPoints, apiStr } = require("../config/endpoints");
-const { formatResponse } = require("../utils/format");
+const { baseUrl, endPoints, apiStr } = require("./Endpoints");
+const { formatResponse } = require("./utils/Formatter");
 const axios = require("axios");
 const searchUrl = baseUrl + apiStr;
 let params;

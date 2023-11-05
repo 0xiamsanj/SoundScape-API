@@ -1,5 +1,5 @@
-const decryptUrl = require("./decoder_util");
-const { getLyrics } = require("../controllers/Controller");
+const decryptUrl = require("./Decoder");
+const { getLyrics } = require("../Controller");
 const formatResponse = (response) => {
   try {
     var artistNames = [];
