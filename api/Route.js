@@ -1,18 +1,17 @@
 const router = require("express").Router();
 const {
   getHomePage,
-  songDetails,
-  searchAlbum,
-  getPlaylist,
-  songDownloader,
+  getAlbumFromID,
   getSongFromID,
+  getPlaylistFromID,
+  getSongsFromSearch,
 } = require("./Controller");
 
 // Routes
 router.get("/", getHomePage);
-router.get("/song", songDetails);
+router.get("/song", getSongsFromSearch);
 router.get("/song-id", getSongFromID);
-router.get("/album", searchAlbum);
-router.get("/playlist", getPlaylist);
+router.get("/album", getAlbumFromID);
+router.get("/playlist", getPlaylistFromID);
 
 module.exports = router;

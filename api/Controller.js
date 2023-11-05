@@ -38,7 +38,7 @@ const getHomePage = async (req, res) => {
   res.json(result);
 };
 
-const songDetails = async (req, res) => {
+const getSongsFromSearch = async (req, res) => {
   const { query } = req.query;
   params = `${endPoints.getResults}&q=${query}`;
 
@@ -53,7 +53,7 @@ const songDetails = async (req, res) => {
   res.send(responseArray);
 };
 
-const searchAlbum = async (req, res) => {
+const getAlbumFromID = async (req, res) => {
   const { query } = req.query;
   params = `${endPoints.albumDetails}&cc=in&includeMetaTags=1&albumid=${query}`;
   const response = await getResponse(params);
@@ -74,7 +74,7 @@ const getSongFromID = async (req, res) => {
   }
 };
 
-const getPlaylist = async (req, res) => {
+const getPlaylistFromID = async (req, res) => {
   const query = req.query.query;
   params = `${endPoints.playlistDetails}&cc=in&_marker=0%3F_marker%3D0&listid=${query}`;
   const response = await getResponse(params);
@@ -82,10 +82,9 @@ const getPlaylist = async (req, res) => {
 };
 
 module.exports = {
-  getResponse,
   getHomePage,
-  searchAlbum,
-  songDetails,
+  getSongsFromSearch,
+  getAlbumFromID,
   getSongFromID,
-  getPlaylist,
+  getPlaylistFromID,
 };
