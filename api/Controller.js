@@ -10,7 +10,7 @@ const downloadSong = require("./utils/Downloader");
 const axios = require("axios");
 const { response } = require("express");
 const searchUrl = baseUrl + apiStr;
-let params;
+let params = "";
 
 const getResponse = async (params, lang = ["English"]) => {
   var preferredLanguages = lang.map((x) => {
@@ -62,21 +62,30 @@ const searchAlbum = async (req, res) => {
   res.send(formatAlbumResponse(response));
 };
 
+const getSongFromID = async (req, res) => {
+  const { id, download } = req.query;
+  params = `${endPoints.songDetails}&pids=${id}`;
+  const response = await getResponse(params);
+  const formattedResponse = formatResponse(response["songs"][0]);
+  res.send(formattedResponse);
+  if (download) {
+    var songName = `${formattedResponse["title"]}`;
+    downloadSong(songName, formattedResponse["song_url"]);
+  }
+};
+
 const getPlaylist = async (req, res) => {
   const query = req.query.query;
-
   params = `${endPoints.playlistDetails}&cc=in&_marker=0%3F_marker%3D0&listid=${query}`;
   const response = await getResponse(params);
   res.send(formatPlaylistResponse(response));
 };
-
-
-
 
 module.exports = {
   getResponse,
   getHomePage,
   searchAlbum,
   songDetails,
+  getSongFromID,
   getPlaylist,
 };
