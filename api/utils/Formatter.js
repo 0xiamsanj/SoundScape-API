@@ -1,5 +1,6 @@
 const decryptUrl = require("./Decoder");
 const { getLyrics } = require("../Controller");
+
 const formatResponse = (response) => {
   try {
     var artistNames = [];
@@ -55,7 +56,7 @@ const formatResponse = (response) => {
     return {
       id: response["id"],
       "320kbps": response["more_info"]["320kbps"],
-      title: response["title"],
+      title: unescape(response["title"]),
       subtitle: response["subtitle"],
       type: response["type"],
       album: response["more_info"]["album"],
@@ -77,4 +78,65 @@ const formatResponse = (response) => {
   }
 };
 
-module.exports = { formatResponse };
+const formatAlbumResponse = (response) => {
+  try {
+    var songsList = [];
+    for (var i = 0; i < response["list_count"]; i++) {
+      var song = formatResponse(response["list"][i]);
+      songsList.push(song);
+    }
+
+    return {
+      id: response["id"],
+      title: response["title"],
+      subtitle: response["subtitle"],
+      header: response["header"],
+      type: response["type"],
+      image: response["image"],
+      language: response["language"],
+      year: response["year"],
+      list_type: response["list_type"],
+      list: songsList,
+      explicit_content: response["explicit_content"],
+    };
+  } catch (error) {
+    return error;
+  }
+};
+
+const formatPlaylistResponse = (response) => {
+  try {
+    // console.log(response)
+    var songList = []
+    for (var i = 0; i < response["list_count"]; i++) {
+      var song = formatResponse(response["list"][i]);
+      console.log(song)
+      songList.push(song);
+    }
+    return {
+      id: response["id"],
+      title: response["title"],
+      subtitle: response["subtitle"],
+      header: response["header"],
+      type: response["type"],
+      image: response["image"],
+      language: response["language"],
+      year: response["year"],
+      list_type: response["list_type"],
+      list: songList,
+      explicit_content: response["explicit_content"],
+      artists: response["more_info"]["artists"]
+    };
+  } catch (error) {
+    return error
+  }
+};
+
+const unescape = (string) => {
+  return string
+    .replaceAll("&amp;", "&")
+    .replaceAll("&#039;", "'")
+    .replaceAll("&quot;", '"');
+};
+
+module.exports = { formatResponse, formatAlbumResponse,formatPlaylistResponse };

@@ -1,8 +1,17 @@
 const { baseUrl, endPoints, apiStr } = require("./Endpoints");
-const { formatResponse } = require("./utils/Formatter");
+const {
+  formatResponse,
+  formatAlbumResponse,
+  formatPlaylistResponse,
+} = require("./utils/Formatter");
+
+const downloadSong = require("./utils/Downloader");
+
 const axios = require("axios");
+const { response } = require("express");
 const searchUrl = baseUrl + apiStr;
 let params;
+
 const getResponse = async (params, lang = ["English"]) => {
   var preferredLanguages = lang.map((x) => {
     return x.toLowerCase();
@@ -21,7 +30,6 @@ const getResponse = async (params, lang = ["English"]) => {
 };
 
 const getHomePage = async (req, res) => {
-  // console.log("Home"+searchUrl+endPoints.homeData)
   const result = await getResponse(endPoints.homeData, [
     "English",
     "Tamil",
@@ -35,23 +43,40 @@ const songDetails = async (req, res) => {
   params = `${endPoints.getResults}&q=${query}`;
 
   const result = await getResponse(params);
-  var resu = [];
+  var responseArray = [];
   for (var i = 0; i < result.results.length; i++) {
-    resu.push(formatResponse(result.results[i]));
+    var response = formatResponse(result.results[i]);
+    var fileName = `${response.title} - ${response.artist[0]}`;
+    downloadSong(fileName, response["song_url"]);
+    responseArray.push(response);
   }
-  res.send(resu);
+  res.send(responseArray);
 };
 
-const getLyrics = async (id) => {
-  params = `${endPoints.lyrics}&lyrics_id=${id}`;
-  const result = await getResponse(params);
-  console.log("Rws" + result);
-  return result;
+const searchAlbum = async (req, res) => {
+  const { query } = req.query;
+  params = `${endPoints.albumDetails}&cc=in&includeMetaTags=1&albumid=${query}`;
+  const response = await getResponse(params);
+  // console.log(response)
+  console.log(formatAlbumResponse(response));
+  res.send(formatAlbumResponse(response));
 };
+
+const getPlaylist = async (req, res) => {
+  const query = req.query.query;
+
+  params = `${endPoints.playlistDetails}&cc=in&_marker=0%3F_marker%3D0&listid=${query}`;
+  const response = await getResponse(params);
+  res.send(formatPlaylistResponse(response));
+};
+
+
+
 
 module.exports = {
   getResponse,
   getHomePage,
+  searchAlbum,
   songDetails,
-  getLyrics,
+  getPlaylist,
 };
