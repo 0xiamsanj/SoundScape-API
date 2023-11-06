@@ -78,19 +78,8 @@ const getSongFromID = async (req, res) => {
   if (minified == "true") {
     let formattedResponse = formatResponse(response["songs"][0]);
     res.send(formattedResponse);
-    if (download) {
-      var songName = `${formattedResponse["title"]}`;
-      downloadSong(songName, formattedResponse["song_url"]);
-    }
   } else {
     res.send(response);
-    if (download) {
-      var songName = `${response["songs"][0]["title"]}`;
-      let songURL = decryptUrl(
-        response["songs"][0]["more_info"]["encrypted_media_url"]
-      );
-      downloadSong(songName, songURL);
-    }
   }
 };
 

@@ -121,13 +121,12 @@ http://localhost:5500/album?query=49428469&minified=true
 ---
 
 ### Song URL Endpoint: 
-Fetches and downloads songs if  **(&download)** is set to true
 ```sh
-http://localhost:5500/song-id?query=<song_url/id>&minified=true&download=true
+http://localhost:5500/song-id?query=<song_url/id>&minified=true
 ```
 *Example:* 
 ```sh
-http://localhost:5500/song-id?id=lkaNaSDX&download=true
+http://localhost:5500/song-id?id=lkaNaSDX&minified=true
 ```
 
 ---
