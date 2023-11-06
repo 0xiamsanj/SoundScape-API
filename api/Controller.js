@@ -6,9 +6,8 @@ const {
 } = require("./utils/Formatter");
 
 const downloadSong = require("./utils/Downloader");
-
 const axios = require("axios");
-const { response } = require("express");
+const decryptUrl = require("./utils/Decoder");
 const searchUrl = baseUrl + apiStr;
 let params = "";
 
@@ -39,46 +38,64 @@ const getHomePage = async (req, res) => {
 };
 
 const getSongsFromSearch = async (req, res) => {
-  const { query } = req.query;
+  const { query, minified } = req.query;
   params = `${endPoints.getResults}&q=${query}`;
-
-  const result = await getResponse(params);
-  var responseArray = [];
-  for (var i = 0; i < result.results.length; i++) {
-    var response = formatResponse(result.results[i]);
-    var fileName = `${response.title} - ${response.artist[0]}`;
-    downloadSong(fileName, response["song_url"]);
-    responseArray.push(response);
+  let result = await getResponse(params);
+  if (minified) {
+    var responseArray = [];
+    for (var i = 0; i < result.results.length; i++) {
+      var response = formatResponse(result.results[i]);
+      responseArray.push(response);
+    }
+    res.send(responseArray);
+  } else {
+    res.send(result);
   }
-  res.send(responseArray);
 };
 
 const getAlbumFromID = async (req, res) => {
-  const { query } = req.query;
+  const { query, minified } = req.query;
   params = `${endPoints.albumDetails}&cc=in&includeMetaTags=1&albumid=${query}`;
   const response = await getResponse(params);
-  // console.log(response)
-  console.log(formatAlbumResponse(response));
-  res.send(formatAlbumResponse(response));
+  if (minified) {
+    res.send(formatAlbumResponse(response));
+  } else {
+    res.send(response);
+  }
 };
 
 const getSongFromID = async (req, res) => {
-  const { id, download } = req.query;
+  const { id, download, minified } = req.query;
   params = `${endPoints.songDetails}&pids=${id}`;
   const response = await getResponse(params);
-  const formattedResponse = formatResponse(response["songs"][0]);
-  res.send(formattedResponse);
-  if (download) {
-    var songName = `${formattedResponse["title"]}`;
-    downloadSong(songName, formattedResponse["song_url"]);
+  if (minified) {
+    let formattedResponse = formatResponse(response["songs"][0]);
+    res.send(formattedResponse);
+    if (download) {
+      var songName = `${formattedResponse["title"]}`;
+      downloadSong(songName, formattedResponse["song_url"]);
+    }
+  } else {
+    res.send(response);
+    if (download) {
+      var songName = `${response["songs"][0]["title"]}`;
+      let songURL = decryptUrl(response["songs"][0]["more_info"]["encrypted_media_url"])
+      downloadSong(songName,songURL);
+    }
   }
 };
 
 const getPlaylistFromID = async (req, res) => {
-  const query = req.query.query;
+  const {query,minified} = req.query;
   params = `${endPoints.playlistDetails}&cc=in&_marker=0%3F_marker%3D0&listid=${query}`;
   const response = await getResponse(params);
-  res.send(formatPlaylistResponse(response));
+  if(minified){
+    let formattedPlaylistResponse = formatPlaylistResponse(response); 
+    res.send(formattedPlaylistResponse);
+  }
+  else{
+    res.send(response)
+  }
 };
 
 module.exports = {
