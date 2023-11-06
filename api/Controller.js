@@ -41,7 +41,7 @@ const getSongsFromSearch = async (req, res) => {
   const { query, minified } = req.query;
   params = `${endPoints.getResults}&q=${query}`;
   let result = await getResponse(params);
-  if (minified) {
+  if (minified == "true") {
     var responseArray = [];
     for (var i = 0; i < result.results.length; i++) {
       var response = formatResponse(result.results[i]);
@@ -57,7 +57,7 @@ const getAlbumFromID = async (req, res) => {
   const { query, minified } = req.query;
   params = `${endPoints.albumDetails}&cc=in&includeMetaTags=1&albumid=${query}`;
   const response = await getResponse(params);
-  if (minified) {
+  if (minified == "true") {
     res.send(formatAlbumResponse(response));
   } else {
     res.send(response);
@@ -68,7 +68,7 @@ const getSongFromID = async (req, res) => {
   const { id, download, minified } = req.query;
   params = `${endPoints.songDetails}&pids=${id}`;
   const response = await getResponse(params);
-  if (minified) {
+  if (minified == "true") {
     let formattedResponse = formatResponse(response["songs"][0]);
     res.send(formattedResponse);
     if (download) {
@@ -79,22 +79,23 @@ const getSongFromID = async (req, res) => {
     res.send(response);
     if (download) {
       var songName = `${response["songs"][0]["title"]}`;
-      let songURL = decryptUrl(response["songs"][0]["more_info"]["encrypted_media_url"])
-      downloadSong(songName,songURL);
+      let songURL = decryptUrl(
+        response["songs"][0]["more_info"]["encrypted_media_url"]
+      );
+      downloadSong(songName, songURL);
     }
   }
 };
 
 const getPlaylistFromID = async (req, res) => {
-  const {query,minified} = req.query;
+  const { query, minified } = req.query;
   params = `${endPoints.playlistDetails}&cc=in&_marker=0%3F_marker%3D0&listid=${query}`;
   const response = await getResponse(params);
-  if(minified){
-    let formattedPlaylistResponse = formatPlaylistResponse(response); 
+  if (minified == "true") {
+    let formattedPlaylistResponse = formatPlaylistResponse(response);
     res.send(formattedPlaylistResponse);
-  }
-  else{
-    res.send(response)
+  } else {
+    res.send(response);
   }
 };
 
