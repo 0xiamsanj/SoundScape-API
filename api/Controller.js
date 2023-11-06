@@ -5,6 +5,7 @@ const {
   formatPlaylistResponse,
 } = require("./utils/Formatter");
 
+ const Helper = require("./utils/Helper")
 const downloadSong = require("./utils/Downloader");
 const axios = require("axios");
 const decryptUrl = require("./utils/Decoder");
@@ -29,16 +30,14 @@ const getResponse = async (params, lang = ["English"]) => {
 };
 
 const getHomePage = async (req, res) => {
-  const result = await getResponse(endPoints.homeData, [
-    "English",
-    "Tamil",
-    "Hindi",
-  ]);
+  let languages = req.query.lang.split("_")
+  const result = await getResponse(endPoints.homeData, languages);
   res.json(result);
 };
 
 const getSongsFromSearch = async (req, res) => {
   const { query, minified } = req.query;
+
   params = `${endPoints.getResults}&q=${query}`;
   let result = await getResponse(params);
   if (minified == "true") {
@@ -63,6 +62,14 @@ const getAlbumFromID = async (req, res) => {
     res.send(response);
   }
 };
+
+
+const fetchResultsFromSearch = async(req,res) =>{
+  let {query,minified} = req.query;
+  params = `${endPoints.search}&cc=in&includeMetaTags=1&query=${query}`
+  const response = await getResponse(params);
+  res.send(response)
+}
 
 const getSongFromID = async (req, res) => {
   const { id, download, minified } = req.query;
@@ -100,9 +107,11 @@ const getPlaylistFromID = async (req, res) => {
 };
 
 module.exports = {
+  getResponse,
   getHomePage,
   getSongsFromSearch,
   getAlbumFromID,
   getSongFromID,
+  fetchResultsFromSearch,
   getPlaylistFromID,
 };

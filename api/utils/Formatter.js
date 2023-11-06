@@ -1,5 +1,4 @@
 const decryptUrl = require("./Decoder");
-const { getLyrics } = require("../Controller");
 
 const formatResponse = (response) => {
   try {
