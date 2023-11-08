@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API Request Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+
+        background-color: #f3f3f3;
+      }
+
+      #container {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        background-color: #0074d9;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 0px 10px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #response {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+
+        white-space: pre-wrap;
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>SOUND SCAPE API</h1>
+      <div>
+        <label for="apiUrl">API URL:</label>
+        <input type="text" id="apiUrl" placeholder="Enter API URL" />
+      </div>
+      <label id="minified-label">
+        <input type="checkbox" id="minifiedCheckbox" />
+        Minified JSON
+      </label>
+      <button id="fetchButton">Fetch Data</button>
+      <div id="response"></div>
+    </div>
+    <script>
+      const apiUrlInput = document.getElementById("apiUrl");
+      const fetchButton = document.getElementById("fetchButton");
+      const responseContainer = document.getElementById("response");
+
+      fetchButton.addEventListener("click", () => {
+        let apiUrl = "";
+        if (minifiedCheckbox.checked) {
+          apiUrl = apiUrlInput.value + "&minified=true";
+        } else {
+          apiUrl = apiUrlInput.value + "&minified=false";
+        }
+
+        // Reset the response
+        responseContainer.textContent = "Fetching data...";
+
+        // Make the API request
+        fetch(apiUrl)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `HTTP Error: ${response.status} ${response.statusText}`
+              );
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // Prettify and display the JSON response
+
+            responseContainer.textContent = JSON.stringify(data, null, 2);
+          })
+          .catch((error) => {
+            responseContainer.textContent = `Error: ${error.message}`;
+          });
+      });
+    </script>
+  </body>
+</html>
